@@ -8,6 +8,8 @@ namespace TestCheckersGame.Stub
 {
     internal class BoardStub : IBoard
     {
+        public int SquareSize => throw new NotImplementedException();
+
         public IPiece[,] Squares { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public bool CanPieceMove(int[] start)
