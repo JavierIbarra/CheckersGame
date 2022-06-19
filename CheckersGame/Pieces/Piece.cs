@@ -44,8 +44,6 @@ namespace CheckersGame.Pieces
             }
         }
 
-        public abstract bool IsValidMove(Board board, int[] start, int[] to);
-
         public int NegativeOrPositiveNumbers(int number)
         {
             if (number < 0)

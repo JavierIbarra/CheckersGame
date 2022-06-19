@@ -8,6 +8,10 @@ Juego de mesa de estrategia, que se juega en un tablero de 8x8 con 12 piezas por
 
 ![Image](https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Column_draughts_game.gif/158px-Column_draughts_game.gif)
 
+## Estructura de la Solucion
+
+![Alt text](estructura_solucion.png?raw=true)
+
 ## Requisitos
 * Visual Studio 2022
 * .Net Core 3.1

@@ -4,18 +4,18 @@ using System.Text;
 
 namespace CheckersGame.Pieces
 {
-    public class King : Piece
+    public class King : Piece, IPiece
     {
         #region Constructor
         public King(bool IsWhite) : base(IsWhite)
         {
             this.IsWhite = IsWhite;
-            this.Name = "O";
+            this.Name = "o";
         }
         #endregion
 
         #region Methods
-        public override bool IsValidMove(Board board, int[] start, int[] to)
+        public bool IsValidMove(Board board, int[] start, int[] to)
         {
             int[] direction = { to[0] - start[0], to[1] - start[1] };
             direction[0] = NegativeOrPositiveNumbers(direction[0]);
@@ -33,8 +33,8 @@ namespace CheckersGame.Pieces
             }
             return true;
         }
-
-        private int[] PiecesCapturedByMovement(Board board, int[] start, int[] to, int[] direction, int[] capturedPiece = null)
+                     
+        public int[] PiecesCapturedByMovement(Board board, int[] start, int[] to, int[] direction, int[] capturedPiece = null)
         {
             int newCoordinateX = start[1] + direction[1];
             int newCoordinateY = start[0] + direction[0];
@@ -43,7 +43,7 @@ namespace CheckersGame.Pieces
 
             if (isValidPosition)
             {
-                Piece piece = board.Squares[newPosition[0], newPosition[1]];
+                IPiece piece = board.Squares[newPosition[0], newPosition[1]];
                 if (piece != null)
                 {
                     if (capturedPiece != null)

@@ -1,4 +1,5 @@
-﻿using CheckersGame.Pieces;
+﻿using CheckersGame.Boards;
+using CheckersGame.Pieces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,19 +10,29 @@ namespace CheckersGame
     {
         #region Properties
         public Board GameBoard { get; }
-        public bool IsPlayer1Turn { get; set; }
+        public bool IsPlayer1Turn { get; private set; }
         #endregion
 
         #region Constructor
         public Game()
         {
-            GameBoard = new Board();
-            GameBoard.International();
+            GameBoard = new PolishBoard();
             IsPlayer1Turn = true;
         }
         public Game(int size)
         {
-            GameBoard = new Board(size);
+            switch (size)
+            {
+                case 1:
+                    GameBoard = new AmericanBoard();
+                    break;
+                case 2:
+                    GameBoard = new InternationalBoard();
+                    break;
+                case 3:
+                    GameBoard = new PolishBoard();
+                    break;
+            }
             IsPlayer1Turn = true;
         }
         #endregion
@@ -45,7 +56,7 @@ namespace CheckersGame
 
                 Console.Write("\nPIECE TO MOVE: ");
                 inputStart = Console.ReadLine();
-                int[] start = TranslateCoordinates(inputStart);
+                int[] start = GetCoordinates(inputStart);
                 if (start == null)
                 {
                     continue;
@@ -84,41 +95,12 @@ namespace CheckersGame
             }
         }
 
-        public void CreateBoard(int[,] boardMap)
-        {
-            int pawnPlayer1 = 1;
-            int pawnPlayer2 = 2;
-            int kingPlayer1 = 10;
-            int kingPlayer2 = 20;
 
-            for (int column = 0; column < GameBoard.SquareSize; column++)
-            {
-                for(int row = 0; row < GameBoard.SquareSize; row++)
-                {
-                    if (boardMap[column, row] == pawnPlayer1)
-                    {
-                        GameBoard.Squares[column, row] = new Pawn(true);
-                    }
-                    else if (boardMap[column, row] == pawnPlayer2)
-                    {
-                        GameBoard.Squares[column, row] = new Pawn(false);
-                    }
-                    else if (boardMap[column, row] == kingPlayer1)
-                    {
-                        GameBoard.Squares[column, row] = new King(true);
-                    }
-                    else if (boardMap[column, row] == kingPlayer2)
-                    {
-                        GameBoard.Squares[column, row] = new King(false);
-                    }
-                }
-            }
-        }
 
         public bool MovePiece(int[] start, int[] to)
         {
-            Piece movedPiece = GameBoard.Squares[start[0], start[1]];
-            Piece endPiece = GameBoard.Squares[to[0], to[1]];
+            IPiece movedPiece = GameBoard.Squares[start[0], start[1]];
+            IPiece endPiece = GameBoard.Squares[to[0], to[1]];
             bool toIsValid = endPiece != null;
             bool isPlayerTurn = (IsPlayer1Turn == movedPiece.IsWhite);
 
@@ -142,7 +124,7 @@ namespace CheckersGame
 
             if (movedPiece.IsValidMove(GameBoard, start, to))
             {
-                Piece piece = GameBoard.Squares[start[0], start[1]];
+                IPiece piece = GameBoard.Squares[start[0], start[1]];
                 GameBoard.Squares[start[0], start[1]] = null;
                 GameBoard.Squares[to[0], to[1]] = piece;
                 return true;
@@ -154,7 +136,7 @@ namespace CheckersGame
             }
         }
 
-        public int[] TranslateCoordinates(string input)
+        public int[] GetCoordinates(string input)
         {
             int minInputCharacters = 2;
             int coordinateX;
@@ -172,30 +154,47 @@ namespace CheckersGame
                 return null;
             }
 
+            int int_coordinateY = coordinateY - 'A';
+            int[] coordinate = new int[] { int_coordinateY, coordinateX };
+
+            if (IsValidCoordinate(coordinate))
+            {
+                return coordinate;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool IsValidCoordinate(int[] coordinate)
+        {
+            int coordinateX = coordinate[0];
+            int coordinateY = coordinate[1];
+
             bool isInvalidCoordinateX = (coordinateX < 0 && coordinateX >= GameBoard.SquareSize);
             if (isInvalidCoordinateX)
             {
                 Console.WriteLine("Row does not exist: '{0}' ", coordinateX);
-                return null;
+                return false;
             }
 
             bool isInvalidCoordinateY = (coordinateY < 0 && coordinateY >= GameBoard.SquareSize);
             if (isInvalidCoordinateY)
             {
                 Console.WriteLine("Column does not exist: '{0}' ", coordinateY);
-                return null;
+                return false;
             }
 
-            int int_coordinateY = coordinateY - 'A';
-            return new int[] { int_coordinateY, coordinateX };
+            return true;
         }
 
-        public bool IsGameEnd()
+        private bool IsGameEnd()
         {
             bool canMove=false;
             int countRedPieces = 0;
             int countWhitePieces = 0;
-            Piece[,] pieces = GameBoard.Squares;
+            IPiece[,] pieces = GameBoard.Squares;
             for (int column = 0; column < pieces.GetLength(0); column += 1)
             {
                 for (int row = 0; row < pieces.GetLength(1); row += 1)
@@ -239,7 +238,7 @@ namespace CheckersGame
 
             foreach (string coordinate in coordinates)
             {
-                int[] coord = TranslateCoordinates(coordinate);
+                int[] coord = GetCoordinates(coordinate);
                 result.Add(coord);
             }
 
@@ -248,7 +247,7 @@ namespace CheckersGame
 
         private void RemoveCapturedPieces(int[] coordinates)
         {
-            Piece piece = GameBoard.Squares[coordinates[0], coordinates[1]];
+            IPiece piece = GameBoard.Squares[coordinates[0], coordinates[1]];
 
             foreach (int[] coordinatesCapturedPieces in piece.CapturedPieces)
             {

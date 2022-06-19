@@ -1,34 +1,24 @@
-﻿using CheckersGame.Pieces;
+﻿using CheckersGame.Boards;
+using CheckersGame.Pieces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CheckersGame
 {
-    public class Board
+    public class Board : IBoard
     {
         #region Properties
-        public int SquareSize { get; private set; }
-        public Piece[,] Squares { get; set; }
-        public List<char> Letters { get; private set; }
-        #endregion
-
-        #region Constructor
-        public Board() { }
-
-        public Board(int Size)
-        {
-            SquareSize = Size;
-            Letters = ListLetter();
-            Squares = new Piece[SquareSize, SquareSize];
-        }
+        public int SquareSize { get; protected set; }
+        public IPiece[,] Squares { get; set; }
+        protected List<char> Letters { get;  set; }
         #endregion
 
         #region Methods
         public bool CanPieceMove(int[] start)
         {
             int spaceToReview = 2;
-            Piece piece = Squares[start[0], start[1]];
+            IPiece piece = Squares[start[0], start[1]];
 
             if (piece == null)
             {
@@ -145,7 +135,7 @@ namespace CheckersGame
             }
         }
 
-        private List<char> ListLetter()
+        public List<char> ListLetter()
         {
             List<char> Letters = new List<char>();
             char letterEnd = (char)('A' + SquareSize);
@@ -162,93 +152,6 @@ namespace CheckersGame
             Console.Write(text);
             Console.ResetColor();
         }
-
-        public void International()
-        {
-            SquareSize = 10;
-            Letters = ListLetter();
-            Squares = new Piece[SquareSize, SquareSize];
-
-            // Piezas blancas
-            Squares[6, 1] = new Pawn(true);
-            Squares[6, 3] = new Pawn(true);
-            Squares[6, 5] = new Pawn(true);
-            Squares[6, 7] = new Pawn(true);
-            Squares[6, 9] = new Pawn(true);
-            Squares[7, 0] = new Pawn(true);
-            Squares[7, 2] = new Pawn(true);
-            Squares[7, 4] = new Pawn(true);
-            Squares[7, 6] = new Pawn(true);
-            Squares[7, 8] = new Pawn(true);
-            Squares[8, 1] = new Pawn(true);
-            Squares[8, 3] = new Pawn(true);
-            Squares[8, 5] = new Pawn(true);
-            Squares[8, 7] = new Pawn(true);
-            Squares[8, 9] = new Pawn(true);
-            Squares[9, 0] = new Pawn(true);
-            Squares[9, 2] = new Pawn(true);
-            Squares[9, 4] = new Pawn(true);
-            Squares[9, 6] = new Pawn(true);
-            Squares[9, 8] = new Pawn(true);
-
-            // Piezas rojas
-            Squares[0, 1] = new Pawn(false);
-            Squares[0, 3] = new Pawn(false);
-            Squares[0, 5] = new Pawn(false);
-            Squares[0, 7] = new Pawn(false);
-            Squares[0, 9] = new Pawn(false);
-            Squares[1, 0] = new Pawn(false);
-            Squares[1, 2] = new Pawn(false);
-            Squares[1, 4] = new Pawn(false);
-            Squares[1, 6] = new Pawn(false);
-            Squares[1, 8] = new Pawn(false);
-            Squares[2, 1] = new Pawn(false);
-            Squares[2, 3] = new Pawn(false);
-            Squares[2, 5] = new Pawn(false);
-            Squares[2, 7] = new Pawn(false);
-            Squares[2, 9] = new Pawn(false);
-            Squares[3, 0] = new Pawn(false);
-            Squares[3, 2] = new Pawn(false);
-            Squares[3, 4] = new Pawn(false);
-            Squares[3, 6] = new Pawn(false);
-            Squares[3, 8] = new Pawn(false);
-        }
-
-        public void American()
-        {
-            SquareSize = 8;
-            Letters = ListLetter();
-            Squares = new Piece[SquareSize, SquareSize];
-
-            // Piezas blancas
-            Squares[5, 0] = new Pawn(true);
-            Squares[5, 2] = new Pawn(true);
-            Squares[5, 4] = new Pawn(true);
-            Squares[5, 6] = new Pawn(true);
-            Squares[6, 1] = new Pawn(true);
-            Squares[6, 3] = new Pawn(true);
-            Squares[6, 5] = new Pawn(true);
-            Squares[6, 7] = new Pawn(true);
-            Squares[7, 0] = new Pawn(true);
-            Squares[7, 2] = new Pawn(true);
-            Squares[7, 4] = new Pawn(true);
-            Squares[7, 6] = new Pawn(true);
-
-            // Piezas rojas
-            Squares[0, 1] = new Pawn(false);
-            Squares[0, 3] = new Pawn(false);
-            Squares[0, 5] = new Pawn(false);
-            Squares[0, 7] = new Pawn(false);
-            Squares[1, 0] = new Pawn(false);
-            Squares[1, 2] = new Pawn(false);
-            Squares[1, 4] = new Pawn(false);
-            Squares[1, 6] = new Pawn(false);
-            Squares[2, 1] = new Pawn(false);
-            Squares[2, 3] = new Pawn(false);
-            Squares[2, 5] = new Pawn(false);
-            Squares[2, 7] = new Pawn(false);
-        }
         #endregion
-
     }
 }
